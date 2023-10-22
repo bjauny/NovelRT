@@ -74,7 +74,23 @@ jobs:
         id: test
         run: |
           cd build/tests/NovelRT.Tests
-          ctest --output-on-failure -C ${{ matrix.configuration }}
+          ctest i--output-junit test-results.xml --output-on-failure -C ${{ matrix.configuration }}
+      
+      - name: Publish NovelRT test results (Windows)
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: "contains(matrix.os, 'windows')"
+        id: test-results-windows
+        with:
+          files: ./**/test-results.xml
+
+      - name: Publish NovelRT test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: "contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')"
+        id: test-results
+        with:
+          files: ./**/test-results.xml
+
+
 
   Documentation:
     name: Doxygen - Ubuntu
