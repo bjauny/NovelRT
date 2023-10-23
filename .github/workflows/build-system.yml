@@ -74,9 +74,9 @@ jobs:
         id: test
         run: |
           cd build/tests/NovelRT.Tests
-          ctest i--output-junit test-results.xml --output-on-failure -C ${{ matrix.configuration }}
+          ctest --output-junit test-results.xml -C ${{ matrix.configuration }}
       
-      - name: Publish NovelRT test results (Windows)
+      - name: Publish NovelRT test results (Ubuntu)
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: "contains(matrix.os, 'ubuntu')"
         id: test-results-windows
