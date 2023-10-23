@@ -76,21 +76,33 @@ jobs:
           cd build/tests/NovelRT.Tests
           ctest --output-junit test-results.xml -C ${{ matrix.configuration }}
       
-      - name: Publish NovelRT test results (Ubuntu)
+      - name: Upload NovelRT test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test Results (${{ matrix.os }})
+          path: test-results.xml
+
+  Publish:
+    name: "Publish Test Results"
+    needs: CI
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+    if: always()
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: "contains(matrix.os, 'ubuntu')"
-        id: test-results-windows
         with:
-          files: ./**/test-results.xml
-
-      - name: Publish NovelRT test results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: "contains(matrix.os, 'macos') || contains(matrix.os, 'windows')"
-        id: test-results
-        with:
-          files: ./**/test-results.xml
-
-
+          files: "artifacts/**/*.xml"
+          json_file: "tests-results.json"
+          json_suite_details: true
 
   Documentation:
     name: Doxygen - Ubuntu
