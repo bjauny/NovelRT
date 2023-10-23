@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Test Results (${{ matrix.os }})
-          path: test-results.xml
+          path: ./**/test-results.xml
 
   Publish:
     name: "Publish Test Results"
